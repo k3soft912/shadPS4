@@ -151,6 +151,10 @@ SettingsDialog::SettingsDialog(std::span<const QString> physical_devices, QWidge
             Config::setBGMvolume(val);
             BackgroundMusicPlayer::getInstance().setVolume(val);
         });
+
+        connect(ui->backButtonBehaviorComboBox, &QComboBox::currentTextChanged, this, [](const QString& text) {
+            Config::setBackButtonBehavior(text.toStdString());
+        });
     }
 
     // GPU TAB
@@ -204,6 +208,7 @@ SettingsDialog::SettingsDialog(std::span<const QString> physical_devices, QWidge
         ui->logFilter->installEventFilter(this);
         ui->updaterGroupBox->installEventFilter(this);
         ui->GUIgroupBox->installEventFilter(this);
+        ui->backButtonBehaviorGroupBox->installEventFilter(this);
 
         // Graphics
         ui->graphicsAdapterGroupBox->installEventFilter(this);
@@ -258,6 +263,8 @@ void SettingsDialog::LoadValuesFromConfig() {
         }
     }
     ui->updateComboBox->setCurrentText(QString::fromStdString(updateChannel));
+
+    ui->backButtonBehaviorComboBox->setCurrentText(QString::fromStdString(Config::getBackButtonBehavior()));
 }
 
 void SettingsDialog::InitializeEmulatorLanguages() {
@@ -319,6 +326,8 @@ void SettingsDialog::updateNoteTextEdit(const QString& elementName) {
         text = tr("updaterGroupBox");
     } else if (elementName == "GUIgroupBox") {
         text = tr("GUIgroupBox");
+    } else if (elementName == "backButtonBehaviorGroupBox") {
+        text = tr("backButtonBehaviorGroupBox");
     }
 
     // Graphics
